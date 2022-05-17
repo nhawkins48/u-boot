@@ -52,6 +52,9 @@ struct lmb_region {
 #endif
 };
 
+
+#define CONFIG_LMB_MEMORY_REGIONS 2
+#define CONFIG_LMB_RESERVED_REGIONS 16
 /**
  * struct lmb - Logical memory block handle.
  *

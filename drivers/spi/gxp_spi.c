@@ -63,7 +63,7 @@ static int gxp_spi_xfer(struct udevice *dev, unsigned int bitlen, const void *do
 {
 	struct gxp_spi_priv *priv = dev_get_priv(dev->parent);
 	struct spi_slave *slave = dev_get_parent_priv(dev);
-	struct dm_spi_slave_platdata *slave_plat = dev_get_parent_platdata(dev);
+	struct dm_spi_slave_plat *slave_plat = dev_get_parent_plat(dev);
 
 	unsigned int len = bitlen / 8;
 	unsigned int value;
@@ -300,7 +300,7 @@ U_BOOT_DRIVER(gxp_spi) = {
 	.id	= UCLASS_SPI,
 	.of_match = gxp_spi_ids,
 	.ops	= &gxp_spi_ops,
-	.priv_auto_alloc_size = sizeof(struct gxp_spi_priv),
+	.priv_auto = sizeof(struct gxp_spi_priv),
 	.probe	= gxp_spi_probe,
 	.child_pre_probe = gxp_spi_child_pre_probe,
 };

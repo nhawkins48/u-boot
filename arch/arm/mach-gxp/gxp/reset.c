@@ -10,7 +10,13 @@
 #include <asm/io.h>
 
 #define GXP_CCR	0xC0000000
-
+void lowlevel_init(void)
+{
+	        /*
+		 *          * Dummy implementation, we only need LOWLEVEL_INIT
+		 *                   * on Armada to configure CP15 in start.S / cpu_init_cp15()
+		 *                            */
+}
 void reset_cpu(ulong ignored)
 {
 	writel(1, GXP_CCR);

@@ -279,7 +279,7 @@ static int gxp_i2c_xfer(struct udevice *dev, struct i2c_msg *msg, int nmsgs)
 
 static int gxp_i2c_probe(struct udevice *dev)
 {
-	debug("Enabling I2C%u\n", dev->seq);
+	debug("Enabling I2C\n");
 	gxp_i2c_init_bus(dev);
 	return 0;
 }
@@ -312,5 +312,5 @@ U_BOOT_DRIVER(gxp_i2c) = {
 	.of_match = gxp_i2c_ids,
 	.probe = gxp_i2c_probe,
 	.ops = &gxp_i2c_ops,
-	.priv_auto_alloc_size = sizeof(struct gxp_i2c_priv),
+	.priv_auto = sizeof(struct gxp_i2c_priv),
 };
