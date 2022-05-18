@@ -20,7 +20,7 @@
 #include "eth_internal.h"
 
 DECLARE_GLOBAL_DATA_PTR;
-
+ #define DEBUG 1
 /*
  * CPU and board-specific Ethernet initializations.  Aliased function
  * signals caller to move on
@@ -245,31 +245,34 @@ int eth_unregister(struct eth_device *dev)
 int eth_initialize(void)
 {
 	int num_devices = 0;
-
+	printk("NICK DEBUG 2");
 	eth_devices = NULL;
 	eth_current = NULL;
 	eth_common_init();
+	printk("N3");
 	/*
 	 * If board-specific initialization exists, call it.
 	 * If not, call a CPU-specific one
 	 */
 	if (board_eth_init != __def_eth_init) {
+		printk("N10");
 		if (board_eth_init(gd->bd) < 0)
 			printf("Board Net Initialization Failed\n");
 	} else if (cpu_eth_init != __def_eth_init) {
+		printk("N11");
 		if (cpu_eth_init(gd->bd) < 0)
 			printf("CPU Net Initialization Failed\n");
 	} else {
 		printf("Net Initialization Skipped\n");
 	}
-
+	printk("N4");
 	if (!eth_devices) {
 		log_err("No ethernet found.\n");
 		bootstage_error(BOOTSTAGE_ID_NET_ETH_START);
 	} else {
 		struct eth_device *dev = eth_devices;
 		char *ethprime = env_get("ethprime");
-
+		printk("N5");
 		bootstage_mark(BOOTSTAGE_ID_NET_ETH_INIT);
 		do {
 			if (dev->index)
@@ -291,7 +294,7 @@ int eth_initialize(void)
 			dev = dev->next;
 			num_devices++;
 		} while (dev != eth_devices);
-
+		printk("N5");
 		eth_current_changed();
 		putc('\n');
 	}

@@ -63,7 +63,7 @@
 #include <efi_loader.h>
 
 DECLARE_GLOBAL_DATA_PTR;
-
+#define DEBUG 1
 ulong monitor_flash_len;
 
 __weak int board_flash_wp_on(void)

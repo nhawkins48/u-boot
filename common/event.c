@@ -6,7 +6,7 @@
  * Copyright 2021 Google LLC
  * Written by Simon Glass <sjg@chromium.org>
  */
-
+#define DEBUG 1
 #define LOG_CATEGORY	LOGC_EVENT
 
 #include <common.h>
@@ -108,22 +108,30 @@ int event_notify(enum event_t type, void *data, int size)
 {
 	struct event event;
 	int ret;
-
+	printk("event1");
 	event.type = type;
-	if (size > sizeof(event.data))
+	if (size > sizeof(event.data)) {
+printk("event2");
 		return log_msg_ret("size", -E2BIG);
-	memcpy(&event.data, data, size);
-
-	ret = notify_static(&event);
-	if (ret)
-		return log_msg_ret("dyn", ret);
-
-	if (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
-		ret = notify_dynamic(&event);
-		if (ret)
-			return log_msg_ret("dyn", ret);
 	}
-
+	printk("event3");
+	memcpy(&event.data, data, size);
+printk("event3");
+	ret = notify_static(&event);
+	i/f (ret) {
+		printk("event4");
+		return log_msg_ret("dyn", ret);
+	}
+	printk("event5");
+	if (CONFIG_IS_ENABLED(EVENT_DYNAMIC)) {
+		printk("event6");
+		ret = notify_dynamic(&event);
+		if (ret) {
+			printk("event8");
+			return log_msg_ret("dyn", ret);
+		}
+	}
+	printk("event7");
 	return 0;
 }
 

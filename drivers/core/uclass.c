@@ -22,7 +22,7 @@
 #include <dm/util.h>
 
 DECLARE_GLOBAL_DATA_PTR;
-
+#define DEBUG 1
 struct uclass *uclass_find(enum uclass_id key)
 {
 	struct uclass *uc;
@@ -250,14 +250,16 @@ int uclass_find_first_device(enum uclass_id id, struct udevice **devp)
 	int ret;
 
 	*devp = NULL;
+	printk("first_uclass");
 	ret = uclass_get(id, &uc);
 	if (ret)
 		return ret;
+	printk("first_uclass2");
 	if (list_empty(&uc->dev_head))
 		return 0;
-
+	printk("first_uclass3");
 	*devp = list_first_entry(&uc->dev_head, struct udevice, uclass_node);
-
+	printk("first_uclass4");
 	return 0;
 }
 
@@ -466,14 +468,17 @@ int uclass_get_device_tail(struct udevice *dev, int ret, struct udevice **devp)
 {
 	if (ret)
 		return ret;
-
+	printk("tail1");
 	assert(dev);
+	printk("tail2");
 	ret = device_probe(dev);
-	if (ret)
+	if (ret) {
+		printk("tail3");
 		return ret;
-
+	}
+	printk("tail4");
 	*devp = dev;
-
+	printk("tail5");
 	return 0;
 }
 
@@ -580,22 +585,27 @@ int uclass_first_device(enum uclass_id id, struct udevice **devp)
 	int ret;
 
 	*devp = NULL;
+	printk("Uclass_first_device1");
 	ret = uclass_find_first_device(id, &dev);
 	if (!dev)
 		return 0;
+	printk("Uclass_first_device2");
 	return uclass_get_device_tail(dev, ret, devp);
 }
 
 int uclass_first_device_err(enum uclass_id id, struct udevice **devp)
 {
 	int ret;
-
+	printk("uclass_first_device_err1");
 	ret = uclass_first_device(id, devp);
-	if (ret)
-		return ret;
-	else if (!*devp)
-		return -ENODEV;
-
+	printk("uclass_first_device_err2");
+	if (ret) {
+		printk("uclass_first_device_err3");
+		return ret;}
+	else if (!*devp) {
+		printk("uclass_first_device_err4");
+		return -ENODEV;}
+printk("uclass_first_device_err5");
 	return 0;
 }
 

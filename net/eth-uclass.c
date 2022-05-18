@@ -419,8 +419,9 @@ int eth_initialize(void)
 {
 	int num_devices = 0;
 	struct udevice *dev;
-
+	printk("NICK DEBUG 1");
 	eth_common_init();
+	printk("NICK DEBUG 2");
 
 	/*
 	 * Devices need to write the hwaddr even if not started so that Linux

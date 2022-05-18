@@ -487,26 +487,27 @@ int device_probe(struct udevice *dev)
 {
 	const struct driver *drv;
 	int ret;
-
+	printk("dev1");
 	if (!dev)
 		return -EINVAL;
-
+	printk("dev2");
 	if (dev_get_flags(dev) & DM_FLAG_ACTIVATED)
 		return 0;
-
+	printk("dev3");
 	ret = device_notify(dev, EVT_DM_PRE_PROBE);
 	if (ret)
 		return ret;
-
+	printk("dev4");
 	drv = dev->driver;
 	assert(drv);
-
+	printk("dev5");
 	ret = device_of_to_plat(dev);
 	if (ret)
 		goto fail;
-
+	printk("dev6");
 	/* Ensure all parents are probed */
 	if (dev->parent) {
+		printk("dev7");
 		ret = device_probe(dev->parent);
 		if (ret)
 			goto fail;
@@ -517,15 +518,17 @@ int device_probe(struct udevice *dev)
 		 * (e.g. PCI bridge devices). Test the flags again
 		 * so that we don't mess up the device.
 		 */
+		printk("dev8");
 		if (dev_get_flags(dev) & DM_FLAG_ACTIVATED)
 			return 0;
 	}
-
+	printk("dev9");
 	dev_or_flags(dev, DM_FLAG_ACTIVATED);
-
+	printk("dev10");
 	if (CONFIG_IS_ENABLED(POWER_DOMAIN) && dev->parent &&
 	    (device_get_uclass_id(dev) != UCLASS_POWER_DOMAIN) &&
 	    !(drv->flags & DM_FLAG_DEFAULT_PD_CTRL_OFF)) {
+		printk("dev11");
 		ret = dev_power_domain_on(dev);
 		if (ret)
 			goto fail;
@@ -546,75 +549,84 @@ int device_probe(struct udevice *dev)
 	 * is set just above. However, the PCI bus' probe() method and
 	 * associated uclass methods have not yet been called.
 	 */
+	printk("dev12");
 	if (dev->parent && device_get_uclass_id(dev) != UCLASS_PINCTRL) {
+		printk("dev13");
 		ret = pinctrl_select_state(dev, "default");
 		if (ret && ret != -ENOSYS)
 			log_debug("Device '%s' failed to configure default pinctrl: %d (%s)\n",
 				  dev->name, ret, errno_str(ret));
 	}
-
+	printk("dev14");
 	if (CONFIG_IS_ENABLED(IOMMU) && dev->parent &&
 	    (device_get_uclass_id(dev) != UCLASS_IOMMU)) {
 		ret = dev_iommu_enable(dev);
 		if (ret)
 			goto fail;
 	}
-
+	printk("dev15");
 	ret = device_get_dma_constraints(dev);
 	if (ret)
 		goto fail;
-
+	printk("dev16");
 	ret = uclass_pre_probe_device(dev);
 	if (ret)
 		goto fail;
-
+	printk("dev17");
 	if (dev->parent && dev->parent->driver->child_pre_probe) {
+		printk("dev18");
 		ret = dev->parent->driver->child_pre_probe(dev);
 		if (ret)
 			goto fail;
 	}
-
+	printk("dev19");
 	/* Only handle devices that have a valid ofnode */
 	if (dev_has_ofnode(dev)) {
 		/*
 		 * Process 'assigned-{clocks/clock-parents/clock-rates}'
 		 * properties
 		 */
+		printk("dev20");
 		ret = clk_set_defaults(dev, CLK_DEFAULTS_PRE);
 		if (ret)
 			goto fail;
 	}
-
+	printk("dev21");
 	if (drv->probe) {
+		printk("dev22");
 		ret = drv->probe(dev);
 		if (ret)
 			goto fail;
 	}
-
+	printk("dev23");
 	ret = uclass_post_probe_device(dev);
 	if (ret)
 		goto fail_uclass;
-
+	printk("dev24");
 	if (dev->parent && device_get_uclass_id(dev) == UCLASS_PINCTRL) {
+		printk("dev25");
 		ret = pinctrl_select_state(dev, "default");
 		if (ret && ret != -ENOSYS)
 			log_debug("Device '%s' failed to configure default pinctrl: %d (%s)\n",
 				  dev->name, ret, errno_str(ret));
 	}
-
+	printk("dev26");
 	ret = device_notify(dev, EVT_DM_POST_PROBE);
-	if (ret)
-		return ret;
-
+	if (ret) {
+		printk("dev30");
+		return ret;}
+	printk("dev31");
 	return 0;
 fail_uclass:
+	printk("dev27");
 	if (device_remove(dev, DM_REMOVE_NORMAL)) {
 		dm_warn("%s: Device '%s' failed to remove on error path\n",
 			__func__, dev->name);
 	}
-fail:
+fail:	
+	printk("dev28");
 	dev_bic_flags(dev, DM_FLAG_ACTIVATED);
-
+	printk("dev29");
 	device_free(dev);
 
 	return ret;

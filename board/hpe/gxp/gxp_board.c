@@ -136,28 +136,33 @@ static int get_eeprom_mac(unsigned char *v_rom_mac, uint8_t nic_index)
 	int ret;
 	unsigned offset = 0x84; /* Offset in the eeprom */
 	offset = offset + (6 * nic_index);
-
+	printk("GETEEPROM1");
 	ret = uclass_first_device_err(UCLASS_I2C_EEPROM, &dev);
-	if (ret)
+	printk("GETEEPROM12");
+	if (ret) {
+		printk("GETEEPROM4");
 		return ret;
-
+	}
+	printk("GETEEPROM2");
 	ret = i2c_eeprom_read(dev, offset, v_rom_mac, 6);
 	if (ret)
-	{
+	{	
+		printk("GETEEPROM5");
 		printf("\n%s: ret %d read eeprom failure \n", __func__, ret);
 	}
-
+	printk("GETEEPROM3");
 	if (!is_valid_ethaddr(v_rom_mac))
 	{
 		printf("\nWarning: MAC eeprom %pM is not valid", v_rom_mac);
 #ifdef CONFIG_NET_RANDOM_ETHADDR
+		printk("GETEEPROM4");
 		net_random_ethaddr(v_rom_mac);
 		printf(",using random MAC address - %pM\n", v_rom_mac);
 #else
 		ret = -1;
 #endif
 	}
-
+printk("GETEEPROM7");
 	return ret;
 }
 
@@ -185,37 +190,42 @@ int board_eth_init(struct bd_info *bis)
 
 #if defined(CONFIG_GXP_UMAC)
 	uint8_t v_mac[6];
-
+printk("ETH INIT1");
 	if (!eth_env_get_enetaddr("ethaddr", v_mac))
 	{
+		printk("ETH INIT2");
 		/* If the MAC address is not in the environment, get it: */
 		if (get_eeprom_mac(v_mac, 0))
 		{
+			printk("ETH INIT3");
 			printf("\n*** ERROR: ethaddr is NOT set !!\n");
 			return -EINVAL;
 		}
+		printk("ETHINIT4");
 		eth_env_set_enetaddr("ethaddr", v_mac);
 		printf("MAC Address %pM ", v_mac);
 	}
-
+	printk("ETHINIT5");
 	if (!eth_env_get_enetaddr("eth1addr", v_mac))
 	{
 		/* If the MAC address is not in the environment, get it: */
+		printk("ETHINIT6");
 		if (get_eeprom_mac(v_mac, 1))
 		{
 			printf("\n*** ERROR: ethaddr is NOT set !!\n");
 			return -EINVAL;
 		}
+		printk("ETHINIT7");
 		eth_env_set_enetaddr("eth1addr", v_mac);
 	}
-
+	printk("ETHINIT8");
 	ret = gxp_umac_register(bis);
 	if (ret < 1)
 	{
 		printf("%s: gxp_umac_register() failed. ret = %d\n", __func__, ret);
 		return -EINVAL; // failed
 	}
-
+	printk("ETHINIT9");
 	dev = eth_get_dev_by_name("GXP_UMAC0");
 	if (!dev)
 	{
